@@ -93,7 +93,7 @@ export function TotalSummaryGauge({
       <div style={{ position: "relative", margin: "4px 0" }}>
         <div
           className="gauge-track"
-          style={{ height: 24, backgroundColor: "var(--color-paper-soft)", borderRadius: 9999, overflow: "visible" }}
+          style={{ height: 12, backgroundColor: "var(--color-paper-soft)", borderRadius: 9999, overflow: "visible" }}
         >
           {/* Actual fill */}
           <div
@@ -122,7 +122,7 @@ export function TotalSummaryGauge({
             <div
               style={{
                 position: "absolute",
-                top: -6,
+                top: -3,
                 left: `${weekTargetPercent}%`,
                 transform: "translateX(-50%)",
               }}
@@ -130,7 +130,7 @@ export function TotalSummaryGauge({
               <div
                 style={{
                   width: 3,
-                  height: 36,
+                  height: 18,
                   backgroundColor: "var(--color-brand)",
                   borderRadius: 2,
                 }}
@@ -141,7 +141,7 @@ export function TotalSummaryGauge({
                   top: -16,
                   left: "50%",
                   transform: "translateX(-50%)",
-                  fontSize: 9,
+                  fontSize: 10,
                   fontWeight: 700,
                   color: "var(--color-brand)",
                   whiteSpace: "nowrap",

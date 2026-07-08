@@ -1,7 +1,7 @@
 // app/page.tsx
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import dayjs from "dayjs";
 
 import { useFitStage } from "@/hooks/useFitStage";
@@ -29,7 +29,10 @@ import { DailyRow, MonthlyRow } from "@/types/revenue";
 function DashboardInner() {
   const { filters } = useFilters();
 
-  const today = filters.dateTo || dayjs().format("YYYY-MM-DD");
+  const [selectedWeekIndex, setSelectedWeekIndex] = useState<number | 'MONTH' | null>(null);
+
+  const actualToday = dayjs().format("YYYY-MM-DD");
+  const today = filters.dateTo || actualToday;
   const filterDate = dayjs(today);
   const currentYear = filterDate.year();
   const currentMonth = filterDate.month() + 1;
@@ -130,9 +133,11 @@ function DashboardInner() {
   );
 
   const currentWeekIndex = useMemo(
-    () => (weeklyTargets.length > 0 ? getCurrentWeekIndex(weeklyTargets, today) : 0),
-    [weeklyTargets, today]
+    () => (weeklyTargets.length > 0 ? getCurrentWeekIndex(weeklyTargets, actualToday) : 0),
+    [weeklyTargets, actualToday]
   );
+
+  const effectiveFilter = selectedWeekIndex !== null ? selectedWeekIndex : currentWeekIndex;
 
   // 5. Ranking & Performance Data (Drill-down logic)
   const isDrillDown = filters.province !== "ALL";
@@ -173,39 +178,95 @@ function DashboardInner() {
   }, [useDailyFallback, filteredDaily, filteredMonthly, filteredTargets, drillDownKey, today]);
 
   const performancePanelsData = useMemo(() => {
-    const currentWeekTargetPct = weeklyTargets[currentWeekIndex]?.cumulativePercent ?? 0;
-    
-    // Map to use weekly cumulative target instead of monthly target
-    const mappedToWeekly = rankingData
-      .filter((o) => o.target > 0)
-      .map((o) => {
-        const weeklyTarget = (o.target * currentWeekTargetPct) / 100;
-        const weeklyProgressPercent = weeklyTarget > 0 ? (o.revenue / weeklyTarget) * 100 : 0;
-        return {
-          ...o,
-          target: weeklyTarget, // override with weekly target
-          progressPercent: weeklyProgressPercent // override with weekly progress
-        };
+    // If MONTH filter is active
+    if (effectiveFilter === 'MONTH') {
+      const revenueSource = useDailyFallback 
+        ? filteredDaily.filter((r) => r.date <= today) 
+        : filteredMonthly;
+        
+      const revGrouped = groupByKey(revenueSource, drillDownKey);
+      const targetGrouped = groupByKey(filteredTargets, drillDownKey);
+      const allKeys = new Set([...Array.from(revGrouped.keys()), ...Array.from(targetGrouped.keys())]);
+      
+      const mappedToWeekly: any[] = [];
+      allKeys.forEach((key) => {
+        const revenue = sumRevenue(revGrouped.get(key) ?? []);
+        const target = (targetGrouped.get(key) ?? []).reduce((sum, t) => sum + (t.target || 0), 0);
+        
+        if (target > 0) {
+          const progressPercent = (revenue / target) * 100;
+          mappedToWeekly.push({
+            name: key,
+            progressPercent: Number(progressPercent.toFixed(1)),
+            revenue,
+            target
+          });
+        }
       });
 
+      const outperforming = mappedToWeekly
+        .filter((o) => o.progressPercent >= 100)
+        .sort((a, b) => b.progressPercent - a.progressPercent)
+        .slice(0, 15);
+
+      const underperforming = mappedToWeekly
+        .filter((o) => o.progressPercent < 100)
+        .sort((a, b) => a.progressPercent - b.progressPercent)
+        .slice(0, 15);
+
+      return { outperforming, underperforming };
+    }
+
+    // Week-by-week calculation
+    const weekIndex = effectiveFilter as number;
+    const currentWeekTarget = weeklyTargets[weekIndex];
+    
+    if (!currentWeekTarget) return { outperforming: [], underperforming: [] };
+
+    const weekTargetPercent = currentWeekTarget.cumulativePercent - (weekIndex === 0 ? 0 : weeklyTargets[weekIndex - 1].cumulativePercent);
+    const weekStart = currentWeekTarget.weekStart;
+    const weekEnd = currentWeekTarget.weekEnd;
+
+    // Filter revenue specifically for THIS week's date range, capped at today
+    const revenueSource = filteredDaily.filter((r) => r.date >= weekStart && r.date <= weekEnd && r.date <= today);
+      
+    const revGrouped = groupByKey(revenueSource, drillDownKey);
+    const targetGrouped = groupByKey(filteredTargets, drillDownKey);
+    const allKeys = new Set([...Array.from(revGrouped.keys()), ...Array.from(targetGrouped.keys())]);
+    
+    const mappedToWeekly: any[] = [];
+    allKeys.forEach((key) => {
+      const revenue = sumRevenue(revGrouped.get(key) ?? []);
+      const monthlyTargetValue = (targetGrouped.get(key) ?? []).reduce((sum, t) => sum + (t.target || 0), 0);
+      
+      if (monthlyTargetValue > 0) {
+        const weeklyTarget = (monthlyTargetValue * weekTargetPercent) / 100;
+        const weeklyProgressPercent = weeklyTarget > 0 ? (revenue / weeklyTarget) * 100 : 0;
+        mappedToWeekly.push({
+          name: key,
+          progressPercent: Number(weeklyProgressPercent.toFixed(1)),
+          revenue,
+          target: weeklyTarget
+        });
+      }
+    });
+
     const outperforming = mappedToWeekly
-      .filter((o) => o.progressPercent >= 100) // 100% of the *weekly* target
+      .filter((o) => o.progressPercent >= 100)
       .sort((a, b) => b.progressPercent - a.progressPercent)
       .slice(0, 15);
 
     const underperforming = mappedToWeekly
-      .filter((o) => o.progressPercent < 100) // less than 100% of the *weekly* target
+      .filter((o) => o.progressPercent < 100)
       .sort((a, b) => a.progressPercent - b.progressPercent)
       .slice(0, 15);
 
     return { outperforming, underperforming };
-  }, [rankingData, weeklyTargets, currentWeekIndex]);
+  }, [filteredDaily, filteredMonthly, filteredTargets, drillDownKey, useDailyFallback, today, weeklyTargets, effectiveFilter]);
 
-  // 6. Donut Data
+  // 6. Donut Data — ALWAYS uses TOTAL(รายวัน) to preserve businessGroup breakdown
   const donutData = useMemo(() => {
-    const revenueSource = useDailyFallback 
-      ? filteredDaily.filter((r) => r.date <= today) 
-      : filteredMonthly;
+    const revenueSource = filteredDaily.filter((r) => r.date <= today);
     
     const byGroup = groupByKey(revenueSource, (r) => r.businessGroup);
     const result: any[] = [];
@@ -213,7 +274,7 @@ function DashboardInner() {
       result.push({ name, value: sumRevenue(rows) });
     });
     return result;
-  }, [useDailyFallback, filteredDaily, filteredMonthly, today]);
+  }, [filteredDaily, today]);
 
   // 7. Daily Chart Data (ALWAYS uses dailyRows)
   const dailyChartData = useMemo(() => {
@@ -234,7 +295,7 @@ function DashboardInner() {
   const insightText = useMemo(() => {
     if (rankingData.length === 0) return "กำลังวิเคราะห์ข้อมูล...";
     const progress = computeProvinceProgress(rankingData, filteredDaily, today, isDrillDown);
-    return generateInsightText(progress);
+    return generateInsightText(progress, isDrillDown);
   }, [rankingData, filteredDaily, today, isDrillDown]);
 
   if (isLoading) return <DashboardSkeleton />;
@@ -274,6 +335,10 @@ function DashboardInner() {
               monthlyTarget={monthlyTarget}
               weeklyTargets={weeklyTargets}
               currentWeekIndex={currentWeekIndex}
+              filteredDaily={filteredDaily}
+              today={today}
+              selectedWeekIndex={effectiveFilter}
+              onSelectWeek={(i) => setSelectedWeekIndex(i === effectiveFilter ? null : i)}
             />
           ) : (
             <div className="card" style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -313,7 +378,10 @@ function DashboardInner() {
 
 function DashboardMobile() {
   const { filters } = useFilters();
-  const today = filters.dateTo || dayjs().format("YYYY-MM-DD");
+  const [selectedWeekIndex, setSelectedWeekIndex] = useState<number | 'MONTH' | null>(null);
+  
+  const actualToday = dayjs().format("YYYY-MM-DD");
+  const today = filters.dateTo || actualToday;
   const filterDate = dayjs(today);
   const currentYear = filterDate.year();
   const currentMonth = filterDate.month() + 1;
@@ -341,7 +409,9 @@ function DashboardMobile() {
   const monthlyTarget = useMemo(() => filteredTargets.reduce((s: number, t: any) => s + (t.target || 0), 0), [filteredTargets]);
   
   const weeklyTargets = useMemo(() => monthlyTarget > 0 ? calculateFibonacciWeeklyTargets(currentYear, currentMonth, monthlyTarget) : [], [currentYear, currentMonth, monthlyTarget]);
-  const currentWeekIndex = useMemo(() => weeklyTargets.length > 0 ? getCurrentWeekIndex(weeklyTargets, today) : 0, [weeklyTargets, today]);
+  const currentWeekIndex = useMemo(() => weeklyTargets.length > 0 ? getCurrentWeekIndex(weeklyTargets, actualToday) : 0, [weeklyTargets, actualToday]);
+  
+  const effectiveFilter = selectedWeekIndex !== null ? selectedWeekIndex : currentWeekIndex;
 
   const isDrillDown = filters.province !== "ALL";
   const drillDownKey = isDrillDown ? (r: any) => r.office : (r: any) => r.province;
@@ -361,27 +431,59 @@ function DashboardMobile() {
   }, [useDailyFallback, filteredDaily, filteredMonthly, filteredTargets, drillDownKey, today]);
 
   const pData = useMemo(() => {
-    const cpt = weeklyTargets[currentWeekIndex]?.cumulativePercent ?? 0;
-    
-    const mappedToWeekly = rankingData
-      .filter((o) => o.target > 0)
-      .map((o) => {
-        const wTarget = (o.target * cpt) / 100;
-        const wPct = wTarget > 0 ? (o.revenue / wTarget) * 100 : 0;
-        return { ...o, target: wTarget, progressPercent: wPct };
+    if (effectiveFilter === 'MONTH') {
+      const rs = useDailyFallback ? filteredDaily.filter(r => r.date <= today) : filteredMonthly;
+      const revG = groupByKey(rs, drillDownKey);
+      const tarG = groupByKey(filteredTargets, drillDownKey);
+      const keys = new Set([...Array.from(revG.keys()), ...Array.from(tarG.keys())]);
+      
+      const mappedToWeekly: any[] = [];
+      keys.forEach(k => {
+        const r = sumRevenue(revG.get(k) ?? []);
+        const t = (tarG.get(k) ?? []).reduce((sum, item) => sum + (item.target || 0), 0);
+        if (t > 0) {
+          const wPct = (r / t) * 100;
+          mappedToWeekly.push({ name: k, progressPercent: wPct, revenue: r, target: t });
+        }
       });
+      return {
+        outperforming: mappedToWeekly.filter(o => o.progressPercent >= 100).sort((a,b) => b.progressPercent - a.progressPercent).slice(0, 10),
+        underperforming: mappedToWeekly.filter(o => o.progressPercent < 100).sort((a,b) => a.progressPercent - b.progressPercent).slice(0, 10)
+      };
+    }
+
+    const weekIndex = effectiveFilter as number;
+    const currentWeekTarget = weeklyTargets[weekIndex];
+    if (!currentWeekTarget) return { outperforming: [], underperforming: [] };
+
+    const weekTargetPercent = currentWeekTarget.cumulativePercent - (weekIndex === 0 ? 0 : weeklyTargets[weekIndex - 1].cumulativePercent);
+    const rs = filteredDaily.filter((r) => r.date >= currentWeekTarget.weekStart && r.date <= currentWeekTarget.weekEnd && r.date <= today);
+    const revG = groupByKey(rs, drillDownKey);
+    const tarG = groupByKey(filteredTargets, drillDownKey);
+    const keys = new Set([...Array.from(revG.keys()), ...Array.from(tarG.keys())]);
+    
+    const mappedToWeekly: any[] = [];
+    keys.forEach(k => {
+      const r = sumRevenue(revG.get(k) ?? []);
+      const t = (tarG.get(k) ?? []).reduce((sum, item) => sum + (item.target || 0), 0);
+      if (t > 0) {
+        const wTarget = (t * weekTargetPercent) / 100;
+        const wPct = wTarget > 0 ? (r / wTarget) * 100 : 0;
+        mappedToWeekly.push({ name: k, progressPercent: wPct, revenue: r, target: wTarget });
+      }
+    });
 
     return {
       outperforming: mappedToWeekly.filter(o => o.progressPercent >= 100).sort((a,b) => b.progressPercent - a.progressPercent).slice(0, 10),
       underperforming: mappedToWeekly.filter(o => o.progressPercent < 100).sort((a,b) => a.progressPercent - b.progressPercent).slice(0, 10)
     };
-  }, [rankingData, weeklyTargets, currentWeekIndex]);
+  }, [filteredDaily, filteredMonthly, filteredTargets, drillDownKey, useDailyFallback, today, weeklyTargets, effectiveFilter]);
 
   const donutData = useMemo(() => {
-    const rs = useDailyFallback ? filteredDaily.filter(r => r.date <= today) : filteredMonthly;
+    const rs = filteredDaily.filter(r => r.date <= today);
     const bg = groupByKey(rs, r => r.businessGroup);
     return Array.from(bg.entries()).map(([name, rows]) => ({ name, value: sumRevenue(rows) }));
-  }, [useDailyFallback, filteredDaily, filteredMonthly, today]);
+  }, [filteredDaily, today]);
 
   const dailyChartData = useMemo(() => {
     const dr = calcDailyRevenues(filteredDaily);
@@ -393,7 +495,7 @@ function DashboardMobile() {
 
   const insightText = useMemo(() => {
     if (rankingData.length === 0) return "กำลังวิเคราะห์...";
-    return generateInsightText(computeProvinceProgress(rankingData, filteredDaily, today, isDrillDown));
+    return generateInsightText(computeProvinceProgress(rankingData, filteredDaily, today, isDrillDown), isDrillDown);
   }, [rankingData, filteredDaily, today, isDrillDown]);
 
   if (isLoading) return <DashboardSkeleton />;
@@ -407,7 +509,7 @@ function DashboardMobile() {
       <div style={{ padding: "12px", display: "flex", flexDirection: "column", gap: 12 }}>
         {weeklyTargets.length > 0 && (
           <div style={{ minHeight: 160 }}>
-            <WeeklyTargetBoxes actualRevenue={actualRevenue} monthlyTarget={monthlyTarget} weeklyTargets={weeklyTargets} currentWeekIndex={currentWeekIndex} />
+            <WeeklyTargetBoxes actualRevenue={actualRevenue} monthlyTarget={monthlyTarget} weeklyTargets={weeklyTargets} currentWeekIndex={currentWeekIndex} filteredDaily={filteredDaily} today={today} selectedWeekIndex={effectiveFilter} onSelectWeek={(i) => setSelectedWeekIndex(i === effectiveFilter ? null : i)} />
           </div>
         )}
         <AIInsightPanel insightText={insightText} generatedAt={formatThaiDate(today, "D MMMM")} />

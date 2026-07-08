@@ -112,13 +112,13 @@ const renderCustomizedLabel = (props: any) => {
     <text
       x={x}
       y={y}
-      fill="white"
+      fill="#1a1a1a"
       textAnchor={x > cx ? 'start' : 'end'}
       dominantBaseline="central"
       fontSize={12}
-      fontWeight={600}
+      fontWeight={700}
       fontFamily="var(--font-sans)"
-      style={{ textShadow: "0px 1px 2px rgba(0,0,0,0.5)" }}
+      style={{ textShadow: "0px 0px 4px rgba(255,255,255,0.9), 0px 0px 8px rgba(255,255,255,0.7)" }}
     >
       {`${(percent * 100).toFixed(0)}%`}
     </text>
@@ -146,8 +146,8 @@ export function BusinessGroupDonut({ data }: { data: DonutItem[] }) {
               data={filtered}
               dataKey="value"
               nameKey="name"
-              innerRadius="50%"
-              outerRadius="80%"
+              innerRadius="35%"
+              outerRadius="90%"
               strokeWidth={2}
               stroke="var(--color-paper)"
               labelLine={false}

@@ -122,12 +122,24 @@ export function expandToDailyCumulativeTarget(
  */
 export function getCurrentWeekIndex(
   weeklyTargets: WeeklyTarget[],
-  today: string
+  actualToday: string
 ): number {
+  if (weeklyTargets.length === 0) return 0;
+  
   for (let i = 0; i < weeklyTargets.length; i++) {
-    if (today >= weeklyTargets[i].weekStart && today <= weeklyTargets[i].weekEnd) {
+    if (actualToday >= weeklyTargets[i].weekStart && actualToday <= weeklyTargets[i].weekEnd) {
       return i;
     }
   }
+  
+  // หากเลยสัปดาห์สุดท้ายของเดือนไปแล้ว (เช่น ดูย้อนหลัง) ให้มองเป็นสัปดาห์อดีตทั้งหมด
+  if (actualToday > weeklyTargets[weeklyTargets.length - 1].weekEnd) {
+    return weeklyTargets.length;
+  }
+  // หากยังไม่ถึงสัปดาห์แรกของเดือน (เช่น ดูล่วงหน้า) ให้มองเป็นสัปดาห์อนาคตทั้งหมด
+  if (actualToday < weeklyTargets[0].weekStart) {
+    return -1;
+  }
+  
   return weeklyTargets.length - 1;
 }

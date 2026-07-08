@@ -70,6 +70,7 @@ export function AIInsightPanel({ insightText, generatedAt }: AIInsightPanelProps
           lineHeight: 1.7,
           margin: 0,
           flex: 1,
+          overflow: "auto",
         }}
       >
         {insightText}

@@ -1,14 +1,19 @@
 export function mapBusinessGroup(rawGroup: string): string {
-  const g = rawGroup || "";
+  let g = rawGroup || "";
   
-  if (g.includes("1.1")) return "กลุ่มบริการไปรษณียภัณฑ์";
-  if (g.includes("1.2") || g.includes("Pickup")) return "กลุ่มบริการขนส่งและโลจิสติกส์";
-  if (g.includes("1.4.1") || g.includes("1.4.2")) return "กลุ่มธุรกิจค้าปลีกและการเงิน";
-  if (g.includes("1.3")) return "กลุ่มบริการระหว่างประเทศ";
+  // ตัดคำนำหน้าออกเพื่อให้ชื่อสั้นลง
+  g = g.replace("กลุ่มธุรกิจ", "");
+  g = g.replace("กลุ่มบริการ", "");
+  g = g.trim();
+  
+  if (g.includes("1.1")) return "ไปรษณียภัณฑ์";
+  if (g.includes("1.2") || g.includes("Pickup")) return "ขนส่งและโลจิสติกส์";
+  if (g.includes("1.4.1") || g.includes("1.4.2")) return "ค้าปลีกและการเงิน";
+  if (g.includes("1.3")) return "ระหว่างประเทศ";
   if (g.includes("1.6")) return "รายได้อื่น";
-  if (g.includes("1.5")) return "กลุ่มธุรกิจอื่นๆ";
+  if (g.includes("1.5")) return "อื่นๆ";
   
-  // Fallback for anything else
+  // Fallback for anything else (e.g. "ค้าปลีกและการเงิน" will just be returned)
   return g;
 }
 

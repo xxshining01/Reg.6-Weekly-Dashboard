@@ -1,5 +1,6 @@
 // components/FilterBar.tsx
 "use client";
+import dayjs from "dayjs";
 import { useFilters } from "@/contexts/FilterContext";
 
 interface FilterBarProps {
@@ -10,6 +11,23 @@ interface FilterBarProps {
 
 export function FilterBar({ provinces, offices, businessGroups }: FilterBarProps) {
   const { filters, setFilters, resetFilters } = useFilters();
+
+  // Derive current month value from filters (YYYY-MM format)
+  const currentMonthValue = dayjs(filters.dateFrom).format("YYYY-MM");
+
+  const handleMonthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value; // "YYYY-MM"
+    if (!val) return;
+    const selected = dayjs(val + "-01");
+    const now = dayjs();
+    const dateFrom = selected.format("YYYY-MM-DD");
+    // If selected month is current month, dateTo = today; else last day of selected month
+    const dateTo =
+      selected.year() === now.year() && selected.month() === now.month()
+        ? now.format("YYYY-MM-DD")
+        : selected.endOf("month").format("YYYY-MM-DD");
+    setFilters({ dateFrom, dateTo });
+  };
 
   // กรอง offices ตาม province ที่เลือก (ถ้าไม่ใช่ ALL)
   const filteredOffices = offices;
@@ -32,7 +50,7 @@ export function FilterBar({ provinces, offices, businessGroups }: FilterBarProps
       {/* Label */}
       <span
         style={{
-          fontSize: 11,
+          fontSize: 14,
           color: "var(--color-ink-soft)",
           fontWeight: 600,
           letterSpacing: "0.05em",
@@ -51,6 +69,7 @@ export function FilterBar({ provinces, offices, businessGroups }: FilterBarProps
         onChange={(e) =>
           setFilters({ province: e.target.value, office: "ALL" })
         }
+        style={{ fontSize: 14 }}
       >
         <option value="ALL">ทุกจังหวัด</option>
         {provinces.map((p) => (
@@ -66,7 +85,7 @@ export function FilterBar({ provinces, offices, businessGroups }: FilterBarProps
         className="filter-select"
         value={filters.office}
         onChange={(e) => setFilters({ office: e.target.value })}
-        style={{ minWidth: 180 }}
+        style={{ minWidth: 180, fontSize: 14 }}
       >
         <option value="ALL">ทุกที่ทำการ</option>
         {filteredOffices.map((o) => (
@@ -82,7 +101,7 @@ export function FilterBar({ provinces, offices, businessGroups }: FilterBarProps
         className="filter-select"
         value={filters.businessGroup}
         onChange={(e) => setFilters({ businessGroup: e.target.value })}
-        style={{ minWidth: 200 }}
+        style={{ minWidth: 200, fontSize: 14 }}
       >
         <option value="ALL">ทุกกลุ่มธุรกิจ</option>
         {businessGroups.map((g) => (
@@ -103,26 +122,17 @@ export function FilterBar({ provinces, offices, businessGroups }: FilterBarProps
         }}
       />
 
-      {/* ช่วงวันที่ */}
-      <span style={{ fontSize: 11, color: "var(--color-ink-soft)", flexShrink: 0 }}>
-        วันที่:
+      {/* เดือน/ปี */}
+      <span style={{ fontSize: 14, color: "var(--color-ink-soft)", flexShrink: 0 }}>
+        เดือน/ปี:
       </span>
       <input
-        id="filter-date-from"
-        type="date"
+        id="filter-month"
+        type="month"
         className="date-input"
-        value={filters.dateFrom}
-        onChange={(e) => setFilters({ dateFrom: e.target.value })}
-      />
-      <span style={{ fontSize: 11, color: "var(--color-ink-soft)", flexShrink: 0 }}>
-        ถึง
-      </span>
-      <input
-        id="filter-date-to"
-        type="date"
-        className="date-input"
-        value={filters.dateTo}
-        onChange={(e) => setFilters({ dateTo: e.target.value })}
+        value={currentMonthValue}
+        onChange={handleMonthChange}
+        style={{ fontSize: 14 }}
       />
 
       {/* Reset */}
@@ -131,7 +141,7 @@ export function FilterBar({ provinces, offices, businessGroups }: FilterBarProps
         onClick={resetFilters}
         style={{
           marginLeft: "auto",
-          fontSize: 11,
+          fontSize: 14,
           color: "var(--color-brand)",
           background: "none",
           border: "1px solid var(--color-brand-light)",

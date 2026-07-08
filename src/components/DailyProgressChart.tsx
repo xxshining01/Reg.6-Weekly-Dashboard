@@ -102,7 +102,7 @@ export function DailyProgressChart({ data, today }: DailyProgressChartProps) {
               tick={{ fontSize: 10, fill: "var(--color-ink-soft)", fontFamily: "var(--font-sans)" }}
               tickLine={false}
               axisLine={false}
-              width={52}
+              width={35}
             />
             <YAxis
               yAxisId="cumulative"
@@ -111,7 +111,7 @@ export function DailyProgressChart({ data, today }: DailyProgressChartProps) {
               tick={{ fontSize: 10, fill: "var(--color-ink-soft)", fontFamily: "var(--font-sans)" }}
               tickLine={false}
               axisLine={false}
-              width={52}
+              width={40}
             />
             <Tooltip content={<CustomTooltip />} />
             {/* วันปัจจุบัน */}

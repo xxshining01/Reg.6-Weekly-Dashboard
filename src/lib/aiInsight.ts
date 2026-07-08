@@ -77,7 +77,7 @@ export function computeProvinceProgress(
   return results.sort((a, b) => b.progressPercent - a.progressPercent || b.momentum - a.momentum);
 }
 
-export function generateInsightText(progress: ProvinceProgress[]): string {
+export function generateInsightText(progress: ProvinceProgress[], isDrillDown: boolean = false): string {
   if (progress.length === 0)
     return "ยังไม่มีข้อมูลเพียงพอสำหรับการวิเคราะห์ (ต้องการข้อมูลอย่างน้อย 3 วันต่อรายการ)";
 
@@ -87,9 +87,9 @@ export function generateInsightText(progress: ProvinceProgress[]): string {
 
   const momentumWord = top.momentum >= 0 ? "เพิ่มขึ้น" : "ลดลง";
 
-  // Check if it's a special unit that shouldn't have "จังหวัด" prefix
+  // Check if it's a special unit that shouldn't have "จังหวัด"/"ที่ทำการ" prefix
   const isSpecialUnit = top.province.startsWith("ศป.") || top.province.includes("ปข.6") || top.province.includes("รายได้อื่น");
-  const prefix = isSpecialUnit ? "" : "จังหวัด";
+  const prefix = isSpecialUnit ? "" : (isDrillDown ? "ที่ทำการ " : "จังหวัด");
 
   return (
     `${prefix}${top.province} มาแรงที่สุดในช่วงนี้ ` +

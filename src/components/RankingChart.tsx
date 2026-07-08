@@ -99,7 +99,7 @@ export function RankingChart({ data, title }: { data: RankItem[]; title: string 
           <BarChart
             data={sorted}
             layout="vertical"
-            margin={{ top: 2, right: 120, bottom: 2, left: 8 }} // Increased right margin for longer labels
+            margin={{ top: 2, right: 110, bottom: 2, left: 8 }}
           >
             <XAxis
               type="number"
