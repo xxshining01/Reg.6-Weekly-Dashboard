@@ -39,14 +39,14 @@ export function TotalSummaryGauge({
       {/* Top row: title + big percent */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
         <div>
-          <p style={{ fontSize: 12, color: "var(--color-ink-soft)", margin: 0 }}>
+          <p style={{ fontSize: 14, color: "var(--color-ink-soft)", margin: 0 }}>
             รายได้สะสมเทียบเป้าหมายรายเดือน
           </p>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 4 }}>
             <span
               style={{
                 fontFamily: "var(--font-display)",
-                fontSize: 38,
+                fontSize: 42,
                 fontWeight: 700,
                 color: isOnTrack ? "var(--color-positive)" : "var(--color-brand)",
                 fontVariantNumeric: "tabular-nums",
@@ -57,7 +57,7 @@ export function TotalSummaryGauge({
             </span>
             <span
               style={{
-                fontSize: 12,
+                fontSize: 14,
                 padding: "2px 8px",
                 borderRadius: 9999,
                 backgroundColor: isOnTrack ? "var(--color-positive-soft)" : "var(--color-warning-soft)",
@@ -72,12 +72,12 @@ export function TotalSummaryGauge({
 
         {/* Week target info */}
         <div style={{ textAlign: "right" }}>
-          <p style={{ fontSize: 11, color: "var(--color-ink-soft)", margin: 0 }}>
+          <p style={{ fontSize: 13, color: "var(--color-ink-soft)", margin: 0 }}>
             เป้าสะสมสัปดาห์ที่ {currentWeekIndex + 1}
           </p>
           <p
             style={{
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: 700,
               color: "var(--color-brand)",
               margin: 0,
@@ -141,7 +141,7 @@ export function TotalSummaryGauge({
                   top: -16,
                   left: "50%",
                   transform: "translateX(-50%)",
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: 700,
                   color: "var(--color-brand)",
                   whiteSpace: "nowrap",
@@ -160,13 +160,13 @@ export function TotalSummaryGauge({
           display: "flex",
           justifyContent: "space-between",
           marginTop: 8,
-          fontSize: 12,
+          fontSize: 14,
           color: "var(--color-ink-soft)",
           fontVariantNumeric: "tabular-nums",
         }}
       >
         <span>
-          <strong style={{ color: "var(--color-ink)", fontSize: 13 }}>
+          <strong style={{ color: "var(--color-ink)", fontSize: 15 }}>
             ฿{actualRevenue.toLocaleString("th-TH", { maximumFractionDigits: 0 })}
           </strong>{" "}
           รายได้จริง
@@ -189,7 +189,7 @@ export function TotalSummaryGauge({
           <div
             key={w.weekIndex}
             style={{
-              fontSize: 10,
+              fontSize: 11,
               padding: "2px 6px",
               borderRadius: 4,
               backgroundColor: i === currentWeekIndex ? "var(--color-brand)" : "var(--color-paper-soft)",

@@ -56,11 +56,11 @@ function PerformanceList({
             flexShrink: 0,
           }}
         />
-        <h2 style={{ fontSize: 15, fontWeight: 700, color, margin: 0 }}>{title}</h2>
+        <h2 style={{ fontSize: 17, fontWeight: 700, color, margin: 0 }}>{title}</h2>
         <span
           style={{
             marginLeft: "auto",
-            fontSize: 13,
+            fontSize: 15,
             backgroundColor: bgColor,
             color,
             padding: "2px 8px",
@@ -74,7 +74,7 @@ function PerformanceList({
 
       {/* List */}
       {items.length === 0 ? (
-        <p style={{ fontSize: 14, color: "var(--color-ink-soft)", textAlign: "center", margin: "auto 0" }}>
+        <p style={{ fontSize: 16, color: "var(--color-ink-soft)", textAlign: "center", margin: "auto 0" }}>
           {emptyMessage ?? "ไม่มีข้อมูล"}
         </p>
       ) : (
@@ -88,14 +88,14 @@ function PerformanceList({
                   display: "flex",
                   alignItems: "center",
                   gap: 8,
-                  fontSize: 14,
+                  fontSize: 16,
                 }}
               >
                 {/* Rank */}
                 <span
                   style={{
                     width: 20,
-                    fontSize: 13,
+                    fontSize: 15,
                     color: "var(--color-ink-soft)",
                     flexShrink: 0,
                     fontVariantNumeric: "tabular-nums",
@@ -123,7 +123,7 @@ function PerformanceList({
                 {/* Amounts (Rev / Target) */}
                 <span
                   style={{
-                    fontSize: 12,
+                    fontSize: 14,
                     color: "var(--color-ink-soft)",
                     fontVariantNumeric: "tabular-nums",
                     whiteSpace: "nowrap",
@@ -158,12 +158,12 @@ function PerformanceList({
                 {/* Percent */}
                 <span
                   style={{
-                    width: 44,
+                    width: 64,
                     textAlign: "right",
                     fontWeight: 700,
                     color,
                     fontVariantNumeric: "tabular-nums",
-                    fontSize: 14,
+                    fontSize: 16,
                     flexShrink: 0,
                   }}
                 >

@@ -20,7 +20,7 @@ import { DashboardFooterNote } from "@/components/DashboardFooterNote";
 import { DashboardSkeleton, DashboardError } from "@/components/DashboardSkeleton";
 
 import { applyFilters, sumRevenue, groupByKey, calcDailyRevenues, toCumulativeDaily, calcBusinessGroupRevenues } from "@/lib/aggregate";
-import { calculateFibonacciWeeklyTargets, expandToDailyCumulativeTarget, getCurrentWeekIndex } from "@/lib/fibonacciTarget";
+import { calculateLinearWeeklyTargets, expandToDailyCumulativeTarget, getCurrentWeekIndex } from "@/lib/fibonacciTarget";
 import { computeProvinceProgress, generateInsightText } from "@/lib/aiInsight";
 
 import { formatThaiDate } from "@/lib/buddhistDate";
@@ -127,7 +127,7 @@ function DashboardInner() {
   const weeklyTargets = useMemo(
     () =>
       monthlyTarget > 0
-        ? calculateFibonacciWeeklyTargets(currentYear, currentMonth, monthlyTarget)
+        ? calculateLinearWeeklyTargets(currentYear, currentMonth, monthlyTarget)
         : [],
     [currentYear, currentMonth, monthlyTarget]
   );
@@ -137,7 +137,15 @@ function DashboardInner() {
     [weeklyTargets, actualToday]
   );
 
-  const effectiveFilter = selectedWeekIndex !== null ? selectedWeekIndex : currentWeekIndex;
+  const defaultWeekIndex = useMemo(() => {
+    if (weeklyTargets.length === 0) return 0;
+    let idx = currentWeekIndex - 1;
+    if (idx < 0) idx = 0;
+    if (idx >= weeklyTargets.length) idx = weeklyTargets.length - 1;
+    return idx;
+  }, [currentWeekIndex, weeklyTargets.length]);
+
+  const effectiveFilter = selectedWeekIndex !== null ? selectedWeekIndex : defaultWeekIndex;
 
   // 5. Ranking & Performance Data (Drill-down logic)
   const isDrillDown = filters.province !== "ALL";
@@ -342,7 +350,7 @@ function DashboardInner() {
             />
           ) : (
             <div className="card" style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <p style={{ fontSize: 15, color: "var(--color-ink-soft)" }}>ไม่มีข้อมูลเป้าหมาย</p>
+              <p style={{ fontSize: 17, color: "var(--color-ink-soft)" }}>ไม่มีข้อมูลเป้าหมาย</p>
             </div>
           )}
         </div>
@@ -352,7 +360,7 @@ function DashboardInner() {
 
         {/* Row 2: Ranking (col 1-5) & Performance Panels (col 6-12) — BIGGEST SECTION */}
         <div style={{ gridColumn: "1 / 5", gridRow: "2" }}>
-          <RankingChart data={rankingData} title={`อันดับความคืบหน้าราย${drillDownTitle}`} />
+          <RankingChart data={rankingData} title={`อันดับความคืบหน้าราย${drillDownTitle}`} isDrillDown={isDrillDown} />
         </div>
         <div style={{ gridColumn: "5 / 13", gridRow: "2" }}>
           <PerformancePanels
@@ -408,10 +416,18 @@ function DashboardMobile() {
   const actualRevenue = useMemo(() => useDailyFallback ? sumRevenue(filteredDaily.filter(r => r.date <= today)) : monthlyRevenueSum, [useDailyFallback, filteredDaily, monthlyRevenueSum, today]);
   const monthlyTarget = useMemo(() => filteredTargets.reduce((s: number, t: any) => s + (t.target || 0), 0), [filteredTargets]);
   
-  const weeklyTargets = useMemo(() => monthlyTarget > 0 ? calculateFibonacciWeeklyTargets(currentYear, currentMonth, monthlyTarget) : [], [currentYear, currentMonth, monthlyTarget]);
+  const weeklyTargets = useMemo(() => monthlyTarget > 0 ? calculateLinearWeeklyTargets(currentYear, currentMonth, monthlyTarget) : [], [currentYear, currentMonth, monthlyTarget]);
   const currentWeekIndex = useMemo(() => weeklyTargets.length > 0 ? getCurrentWeekIndex(weeklyTargets, actualToday) : 0, [weeklyTargets, actualToday]);
   
-  const effectiveFilter = selectedWeekIndex !== null ? selectedWeekIndex : currentWeekIndex;
+  const defaultWeekIndex = useMemo(() => {
+    if (weeklyTargets.length === 0) return 0;
+    let idx = currentWeekIndex - 1;
+    if (idx < 0) idx = 0;
+    if (idx >= weeklyTargets.length) idx = weeklyTargets.length - 1;
+    return idx;
+  }, [currentWeekIndex, weeklyTargets.length]);
+
+  const effectiveFilter = selectedWeekIndex !== null ? selectedWeekIndex : defaultWeekIndex;
 
   const isDrillDown = filters.province !== "ALL";
   const drillDownKey = isDrillDown ? (r: any) => r.office : (r: any) => r.province;
@@ -516,7 +532,7 @@ function DashboardMobile() {
         
         {/* Prioritized ranking */}
         <div style={{ height: 300 }}>
-          <RankingChart data={rankingData} title={`อันดับความคืบหน้าราย${drillDownTitle}`} />
+          <RankingChart data={rankingData} title={`อันดับความคืบหน้าราย${drillDownTitle}`} isDrillDown={isDrillDown} />
         </div>
         <PerformancePanels outperforming={pData.outperforming} underperforming={pData.underperforming} titlePrefix={drillDownTitle} />
 

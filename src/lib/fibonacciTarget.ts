@@ -1,9 +1,9 @@
 // lib/fibonacciTarget.ts
-// อัลกอริทึม Fibonacci Weekly Target — หัวใจของ Gauge
+// คำนวณเป้าหมายรายสัปดาห์ (หารเท่าตามจำนวนวัน)
 
 import dayjs from "dayjs";
 
-/** คืนลำดับ Fibonacci ความยาว n เริ่มที่ 1,1,2,3,5,8,... */
+// ฟังก์ชัน Fibonacci ไม่ได้ใช้งานแล้ว แต่ยังเก็บไว้เผื่ออ้างอิง
 function fibonacciSequence(n: number): number[] {
   const seq = [1, 1];
   while (seq.length < n) {
@@ -51,22 +51,20 @@ export interface WeeklyTarget {
   cumulativeAmount: number;   // จำนวนเงินสะสมถึงสัปดาห์นี้
 }
 
-export function calculateFibonacciWeeklyTargets(
+export function calculateLinearWeeklyTargets(
   year: number,
   month: number,
   monthlyTarget: number
 ): WeeklyTarget[] {
   const daysPerWeek = splitMonthIntoFriThuWeeks(year, month);
-  const fib = fibonacciSequence(daysPerWeek.length);
-
-  const weightedScores = daysPerWeek.map((days, i) => days * fib[i]);
-  const totalScore = weightedScores.reduce((a, b) => a + b, 0);
+  
+  const totalDays = daysPerWeek.reduce((a, b) => a + b, 0);
 
   let cumulativePercent = 0;
   let cursorDate = dayjs(`${year}-${String(month).padStart(2, "0")}-01`);
 
   return daysPerWeek.map((days, i) => {
-    const percentOfMonth = (weightedScores[i] / totalScore) * 100;
+    const percentOfMonth = (days / totalDays) * 100;
     cumulativePercent += percentOfMonth;
 
     const weekStart = cursorDate;

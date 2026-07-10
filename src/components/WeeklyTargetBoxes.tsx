@@ -52,9 +52,12 @@ export function WeeklyTargetBoxes({
             )
           );
 
-          // Progress for this specific week
-          const weekProgressPercent = weekTarget > 0 ? (weekActual / weekTarget) * 100 : 0;
-          const fillPercent = Math.min(weekProgressPercent, 100);
+          // % of Monthly Target that this week achieved
+          const actualPercentOfMonth = monthlyTarget > 0 ? (weekActual / monthlyTarget) * 100 : 0;
+
+          // Progress bar fill is still relative to the week's goal
+          const weekProgressRatio = weekTarget > 0 ? (weekActual / weekTarget) * 100 : 0;
+          const fillPercent = Math.min(weekProgressRatio, 100);
 
           const isCurrentWeek = i === currentWeekIndex;
           const isPast = i < currentWeekIndex;
@@ -130,17 +133,17 @@ export function WeeklyTargetBoxes({
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
                 <span
                   style={{
-                    fontSize: 18,
+                    fontSize: 20,
                     fontWeight: 700,
                     color: isCurrentWeek ? "var(--color-brand)" : "var(--color-ink)",
                   }}
                 >
-                  W{w.weekIndex} <span style={{ fontSize: 14, fontWeight: 500, color: "var(--color-ink-soft)" }}>({startDay}-{endDay})</span>
+                  W{w.weekIndex} <span style={{ fontSize: 16, fontWeight: 500, color: "var(--color-ink-soft)" }}>({startDay}-{endDay})</span>
                 </span>
                 {statusText && (
                   <span
                     style={{
-                      fontSize: 13,
+                      fontSize: 15,
                       fontWeight: 600,
                       padding: "2px 8px",
                       borderRadius: 9999,
@@ -155,15 +158,15 @@ export function WeeklyTargetBoxes({
               </div>
 
               {/* Weekly Progress % */}
-              <div style={{ fontSize: 28, fontWeight: 700, color: isCompleted ? "var(--color-positive)" : isPast ? "var(--color-warning)" : "var(--color-brand)", fontVariantNumeric: "tabular-nums", lineHeight: 1.1, marginBottom: 2 }}>
-                {weekProgressPercent.toFixed(1)}%
-                <span style={{ fontSize: 14, fontWeight: 500, color: "var(--color-ink-soft)", marginLeft: 4 }}>
+              <div style={{ fontSize: 31, fontWeight: 700, color: isCompleted ? "var(--color-positive)" : isPast ? "var(--color-warning)" : "var(--color-brand)", fontVariantNumeric: "tabular-nums", lineHeight: 1.1, marginBottom: 2 }}>
+                {actualPercentOfMonth.toFixed(1)}%
+                <span style={{ fontSize: 16, fontWeight: 500, color: "var(--color-ink-soft)", marginLeft: 4 }}>
                   / {weekTargetPercent.toFixed(0)}%
                 </span>
               </div>
 
               {/* Revenue amount */}
-              <div style={{ fontSize: 14, color: "var(--color-ink-soft)", fontVariantNumeric: "tabular-nums", marginBottom: 4 }}>
+              <div style={{ fontSize: 16, color: "var(--color-ink-soft)", fontVariantNumeric: "tabular-nums", marginBottom: 4 }}>
                 ฿{formatBaht(weekActual)} / ฿{formatBaht(weekTarget)}
               </div>
 
@@ -207,10 +210,10 @@ export function WeeklyTargetBoxes({
         }}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontSize: 12, fontWeight: 600, color: "var(--color-ink)" }}>
+          <span style={{ fontSize: 14, fontWeight: 600, color: "var(--color-ink)" }}>
             ความคืบหน้าสะสมเดือน
           </span>
-          <span style={{ fontSize: 14, fontWeight: 700, color: cumulativePercent >= 100 ? "var(--color-positive)" : "var(--color-brand)", fontVariantNumeric: "tabular-nums" }}>
+          <span style={{ fontSize: 16, fontWeight: 700, color: cumulativePercent >= 100 ? "var(--color-positive)" : "var(--color-brand)", fontVariantNumeric: "tabular-nums" }}>
             {cumulativePercent.toFixed(1)}%
           </span>
         </div>
@@ -258,7 +261,7 @@ export function WeeklyTargetBoxes({
                 />
                 <span
                   style={{
-                    fontSize: 9,
+                    fontSize: 10,
                     fontWeight: idx === currentWeekIndex ? 700 : 500,
                     color: idx === currentWeekIndex ? "var(--color-brand)" : "var(--color-ink-soft)",
                     whiteSpace: "nowrap",
@@ -273,7 +276,7 @@ export function WeeklyTargetBoxes({
         </div>
 
         {/* Amounts */}
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--color-ink-soft)", fontVariantNumeric: "tabular-nums", marginTop: 14 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--color-ink-soft)", fontVariantNumeric: "tabular-nums", marginTop: 14 }}>
           <span>
             <strong style={{ color: "var(--color-ink)" }}>฿{formatBaht(actualRevenue)}</strong>{" "}รายได้สะสมจริง
           </span>

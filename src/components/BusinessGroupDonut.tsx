@@ -38,7 +38,7 @@ function CustomTooltip({ active, payload }: {
         border: "1px solid var(--color-paper-line)",
         borderRadius: 8,
         padding: "8px 12px",
-        fontSize: 14,
+        fontSize: 16,
         boxShadow: "var(--shadow-card)",
         fontFamily: "var(--font-sans)",
       }}
@@ -72,7 +72,7 @@ function CustomLegend({ payload, total }: {
               display: "flex",
               alignItems: "center",
               gap: 6,
-              fontSize: 13,
+              fontSize: 15,
               color: "var(--color-ink)",
               fontFamily: "var(--font-sans)",
             }}
@@ -132,12 +132,9 @@ export function BusinessGroupDonut({ data }: { data: DonutItem[] }) {
   return (
     <div className="card" style={{ padding: "14px 16px", height: "100%", display: "flex", flexDirection: "column" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-        <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--color-ink)", margin: 0 }}>
+        <h2 style={{ fontSize: 17, fontWeight: 600, color: "var(--color-ink)", margin: 0 }}>
           สัดส่วนรายได้ตามกลุ่มธุรกิจ
         </h2>
-        <span style={{ fontSize: 13, color: "var(--color-ink-soft)", fontVariantNumeric: "tabular-nums" }}>
-          ฿{total.toLocaleString("th-TH", { maximumFractionDigits: 0 })}
-        </span>
       </div>
       <div style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -163,10 +160,13 @@ export function BusinessGroupDonut({ data }: { data: DonutItem[] }) {
               align="right"
               verticalAlign="middle"
               content={<CustomLegend total={total} />}
-              wrapperStyle={{ paddingLeft: 8, width: 170 }}
+              wrapperStyle={{ paddingLeft: 8, width: 220 }}
             />
           </PieChart>
         </ResponsiveContainer>
+      </div>
+      <div style={{ marginTop: 8, fontSize: 15, color: "var(--color-ink-soft)", fontVariantNumeric: "tabular-nums", fontWeight: 600 }}>
+        รวม: ฿{total.toLocaleString("th-TH", { maximumFractionDigits: 0 })}
       </div>
     </div>
   );

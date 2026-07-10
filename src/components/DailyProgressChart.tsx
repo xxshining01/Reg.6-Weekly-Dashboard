@@ -11,7 +11,7 @@ import {
   CartesianGrid,
   ReferenceLine,
 } from "recharts";
-import { formatThaiDateShort } from "@/lib/buddhistDate";
+import { formatThaiDateShort, formatThaiDateDayOfWeek } from "@/lib/buddhistDate";
 
 interface DataPoint {
   date: string;
@@ -44,7 +44,7 @@ function CustomTooltip({ active, payload, label }: {
         border: "1px solid var(--color-paper-line)",
         borderRadius: 8,
         padding: "8px 12px",
-        fontSize: 12,
+        fontSize: 14,
         boxShadow: "var(--shadow-card)",
         fontFamily: "var(--font-sans)",
       }}
@@ -65,10 +65,10 @@ export function DailyProgressChart({ data, today }: DailyProgressChartProps) {
   return (
     <div className="card" style={{ padding: "14px 16px", height: "100%", display: "flex", flexDirection: "column" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-        <h2 style={{ fontSize: 13, fontWeight: 600, color: "var(--color-ink)", margin: 0 }}>
+        <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--color-ink)", margin: 0 }}>
           รายได้รายวันเทียบเป้าหมายสะสม
         </h2>
-        <div style={{ display: "flex", gap: 12, fontSize: 11 }}>
+        <div style={{ display: "flex", gap: 12, fontSize: 13 }}>
           <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
             <span style={{ width: 12, height: 12, borderRadius: 2, backgroundColor: "var(--color-brand)", display: "inline-block" }} />
             รายได้จริง (รายวัน)
@@ -89,8 +89,8 @@ export function DailyProgressChart({ data, today }: DailyProgressChartProps) {
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-paper-line)" vertical={false} />
             <XAxis
               dataKey="date"
-              tickFormatter={(d) => formatThaiDateShort(d)}
-              tick={{ fontSize: 10, fill: "var(--color-ink-soft)", fontFamily: "var(--font-sans)" }}
+              tickFormatter={(d) => formatThaiDateDayOfWeek(d)}
+              tick={{ fontSize: 11, fill: "var(--color-ink-soft)", fontFamily: "var(--font-sans)" }}
               tickLine={false}
               axisLine={{ stroke: "var(--color-paper-line)" }}
               interval="preserveStartEnd"
@@ -99,7 +99,7 @@ export function DailyProgressChart({ data, today }: DailyProgressChartProps) {
               yAxisId="daily"
               orientation="left"
               tickFormatter={formatYAxis}
-              tick={{ fontSize: 10, fill: "var(--color-ink-soft)", fontFamily: "var(--font-sans)" }}
+              tick={{ fontSize: 11, fill: "var(--color-ink-soft)", fontFamily: "var(--font-sans)" }}
               tickLine={false}
               axisLine={false}
               width={35}
@@ -108,7 +108,7 @@ export function DailyProgressChart({ data, today }: DailyProgressChartProps) {
               yAxisId="cumulative"
               orientation="right"
               tickFormatter={formatYAxis}
-              tick={{ fontSize: 10, fill: "var(--color-ink-soft)", fontFamily: "var(--font-sans)" }}
+              tick={{ fontSize: 11, fill: "var(--color-ink-soft)", fontFamily: "var(--font-sans)" }}
               tickLine={false}
               axisLine={false}
               width={40}

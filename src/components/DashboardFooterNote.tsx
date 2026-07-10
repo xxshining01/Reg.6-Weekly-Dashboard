@@ -13,15 +13,15 @@ export function DashboardFooterNote({ refreshedAt }: { refreshedAt?: string }) {
         flexShrink: 0,
       }}
     >
-      <span style={{ fontSize: 11, color: "var(--color-ink-soft)" }}>
+      <span style={{ fontSize: 13, color: "var(--color-ink-soft)" }}>
         ⚠️ ข้อมูลนี้เป็นเพียงการคาดการณ์รายได้เท่านั้น ไม่ใช่ตัวเลขยืนยันทางการ
       </span>
       {refreshedAt && (
-        <span style={{ fontSize: 10, color: "var(--color-ink-soft)" }}>
+        <span style={{ fontSize: 11, color: "var(--color-ink-soft)" }}>
           โหลดข้อมูลล่าสุด: {refreshedAt}
         </span>
       )}
-      <span style={{ fontSize: 10, color: "var(--color-ink-soft)" }}>
+      <span style={{ fontSize: 11, color: "var(--color-ink-soft)" }}>
         ปข.6 Revenue Dashboard v2.0
       </span>
     </footer>

@@ -42,7 +42,7 @@ export function DashboardHeader({
             flexShrink: 0,
           }}
         >
-          <span style={{ color: "white", fontSize: 16, fontWeight: 700, fontFamily: "var(--font-display)" }}>
+          <span style={{ color: "white", fontSize: 18, fontWeight: 700, fontFamily: "var(--font-display)" }}>
             ป
           </span>
         </div>
@@ -50,7 +50,7 @@ export function DashboardHeader({
           <h1
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: 22,
+              fontSize: 25,
               fontWeight: 700,
               color: "var(--color-ink)",
               margin: 0,
@@ -61,7 +61,7 @@ export function DashboardHeader({
           </h1>
           <p
             style={{
-              fontSize: 12,
+              fontSize: 14,
               color: "var(--color-ink-soft)",
               margin: 0,
               marginTop: 2,
@@ -75,12 +75,12 @@ export function DashboardHeader({
       {/* Right: Last updated + Refresh */}
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
         <div style={{ textAlign: "right" }}>
-          <p style={{ fontSize: 11, color: "var(--color-ink-soft)", margin: 0 }}>
+          <p style={{ fontSize: 13, color: "var(--color-ink-soft)", margin: 0 }}>
             ข้อมูล ณ วันที่
           </p>
           <p
             style={{
-              fontSize: 13,
+              fontSize: 15,
               fontWeight: 600,
               color: "var(--color-ink)",
               margin: 0,
@@ -103,7 +103,7 @@ export function DashboardHeader({
               border: "1px solid var(--color-paper-line)",
               backgroundColor: "var(--color-paper)",
               color: "var(--color-ink-soft)",
-              fontSize: 12,
+              fontSize: 14,
               cursor: isRefreshing ? "wait" : "pointer",
               fontFamily: "var(--font-sans)",
               transition: "all 0.15s ease",

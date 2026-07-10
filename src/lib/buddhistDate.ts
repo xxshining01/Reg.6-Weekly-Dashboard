@@ -35,6 +35,15 @@ export function formatThaiDateShort(dateISO: string): string {
 }
 
 /**
+ * แปลง ISO date string → รูปแบบ "D (dd)" เช่น "3 (พ)"
+ */
+export function formatThaiDateDayOfWeek(dateISO: string): string {
+  const d = dayjs(dateISO).locale("th");
+  // dd จะได้ จ, อ, พ, พฤ, ศ, ส, อา
+  return d.format("D (dd)");
+}
+
+/**
  * คืนชื่อเดือนภาษาไทย (เต็ม) และปี พ.ศ.
  * @example getThaiMonthYear("2026-07-07") → "กรกฎาคม 2569"
  */

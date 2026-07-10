@@ -7,21 +7,32 @@
    ============================================ */
 @theme {
   /* --- Color Palette --- */
-  --color-paper: #faf6ec;          /* พื้นหลังหลัก ครีมสว่าง */
-  --color-paper-soft: #f3eedf;     /* พื้นหลังการ์ด/แถบรอง */
-  --color-paper-line: #e4dcc4;     /* เส้นแบ่ง/ตาราง */
+  --color-paper: #faf6ec;
+  /* พื้นหลังหลัก ครีมสว่าง */
+  --color-paper-soft: #f3eedf;
+  /* พื้นหลังการ์ด/แถบรอง */
+  --color-paper-line: #e4dcc4;
+  /* เส้นแบ่ง/ตาราง */
 
-  --color-ink: #2b2a28;            /* ตัวอักษรหลัก */
-  --color-ink-soft: #6b6558;       /* ตัวอักษรรอง / caption */
+  --color-ink: #2b2a28;
+  /* ตัวอักษรหลัก */
+  --color-ink-soft: #000000;
+  /* ตัวอักษรรอง / caption */
 
-  --color-brand: #264c73;          /* น้ำเงินกรมท่า accent หลัก */
-  --color-brand-light: #5e85a8;    /* น้ำเงินกรมท่า อ่อน */
+  --color-brand: #264c73;
+  /* น้ำเงินกรมท่า accent หลัก */
+  --color-brand-light: #5e85a8;
+  /* น้ำเงินกรมท่า อ่อน */
 
-  --color-positive: #3e7c59;       /* เขียวเข้ม (เกินเป้า) */
-  --color-positive-soft: #dcebe1;  /* เขียวอ่อน (background) */
+  --color-positive: #3e7c59;
+  /* เขียวเข้ม (เกินเป้า) */
+  --color-positive-soft: #dcebe1;
+  /* เขียวอ่อน (background) */
 
-  --color-warning: #b5652f;        /* ส้มอิฐ (ต่ำกว่าเป้า) */
-  --color-warning-soft: #f3e1d2;   /* ส้มอิฐอ่อน (background) */
+  --color-warning: #b5652f;
+  /* ส้มอิฐ (ต่ำกว่าเป้า) */
+  --color-warning-soft: #f3e1d2;
+  /* ส้มอิฐอ่อน (background) */
 
   /* --- Typography --- */
   --font-sans: "Noto Sans Thai", "Sarabun", sans-serif;
@@ -35,17 +46,21 @@
 /* ============================================
    Base Styles
    ============================================ */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   background-color: var(--color-ink);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  font-size: 15px; /* ขยายฟ้อนต์เพื่อผู้สูงอายุ */
+  font-size: 15px;
+  /* ขยายฟ้อนต์เพื่อผู้สูงอายุ */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
@@ -58,7 +73,8 @@ html, body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-color: #1a1916; /* letterbox color */
+  background-color: #1a1916;
+  /* letterbox color */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -196,17 +212,20 @@ html, body {
    Skeleton Loading
    ============================================ */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--color-paper-soft) 25%,
-    var(--color-paper-line) 50%,
-    var(--color-paper-soft) 75%
-  );
+  background: linear-gradient(90deg,
+      var(--color-paper-soft) 25%,
+      var(--color-paper-line) 50%,
+      var(--color-paper-soft) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 8px;
@@ -238,15 +257,19 @@ html, body {
    Print / Fullscreen
    ============================================ */
 @media print {
-  html, body {
+
+  html,
+  body {
     overflow: visible !important;
     background: white !important;
   }
+
   .stage-wrapper {
     width: 100% !important;
     height: auto !important;
     display: block !important;
   }
+
   .stage-canvas {
     transform: none !important;
     width: 100% !important;

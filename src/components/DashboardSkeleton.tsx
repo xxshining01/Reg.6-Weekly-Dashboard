@@ -69,10 +69,10 @@ export function DashboardError({ message, onRetry }: { message: string; onRetry?
         </svg>
       </div>
       <div style={{ textAlign: "center" }}>
-        <p style={{ fontSize: 15, fontWeight: 600, color: "var(--color-ink)", margin: "0 0 4px" }}>
+        <p style={{ fontSize: 17, fontWeight: 600, color: "var(--color-ink)", margin: "0 0 4px" }}>
           ไม่สามารถโหลดข้อมูลได้
         </p>
-        <p style={{ fontSize: 13, color: "var(--color-ink-soft)", margin: 0 }}>{message}</p>
+        <p style={{ fontSize: 15, color: "var(--color-ink-soft)", margin: 0 }}>{message}</p>
       </div>
       {onRetry && (
         <button
@@ -83,7 +83,7 @@ export function DashboardError({ message, onRetry }: { message: string; onRetry?
             border: "1px solid var(--color-brand)",
             backgroundColor: "var(--color-brand)",
             color: "white",
-            fontSize: 13,
+            fontSize: 15,
             cursor: "pointer",
             fontFamily: "var(--font-sans)",
           }}

@@ -5,12 +5,21 @@ import dayjs from "dayjs";
 import { DashboardFilters } from "@/types/revenue";
 
 function getDefaultFilters(): DashboardFilters {
+  const now = dayjs();
+  const refDate = now.subtract(7, "day");
+  
+  const dateFrom = refDate.startOf("month").format("YYYY-MM-DD");
+  const dateTo =
+    refDate.year() === now.year() && refDate.month() === now.month()
+      ? now.format("YYYY-MM-DD")
+      : refDate.endOf("month").format("YYYY-MM-DD");
+
   return {
     province: "ALL",
     office: "ALL",
     businessGroup: "ALL",
-    dateFrom: dayjs().startOf("month").format("YYYY-MM-DD"),
-    dateTo: dayjs().format("YYYY-MM-DD"),
+    dateFrom,
+    dateTo,
   };
 }
 

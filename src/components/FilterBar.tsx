@@ -50,7 +50,7 @@ export function FilterBar({ provinces, offices, businessGroups }: FilterBarProps
       {/* Label */}
       <span
         style={{
-          fontSize: 14,
+          fontSize: 16,
           color: "var(--color-ink-soft)",
           fontWeight: 600,
           letterSpacing: "0.05em",
@@ -69,7 +69,7 @@ export function FilterBar({ provinces, offices, businessGroups }: FilterBarProps
         onChange={(e) =>
           setFilters({ province: e.target.value, office: "ALL" })
         }
-        style={{ fontSize: 14 }}
+        style={{ fontSize: 16 }}
       >
         <option value="ALL">ทุกจังหวัด</option>
         {provinces.map((p) => (
@@ -85,7 +85,7 @@ export function FilterBar({ provinces, offices, businessGroups }: FilterBarProps
         className="filter-select"
         value={filters.office}
         onChange={(e) => setFilters({ office: e.target.value })}
-        style={{ minWidth: 180, fontSize: 14 }}
+        style={{ minWidth: 180, fontSize: 16 }}
       >
         <option value="ALL">ทุกที่ทำการ</option>
         {filteredOffices.map((o) => (
@@ -101,7 +101,7 @@ export function FilterBar({ provinces, offices, businessGroups }: FilterBarProps
         className="filter-select"
         value={filters.businessGroup}
         onChange={(e) => setFilters({ businessGroup: e.target.value })}
-        style={{ minWidth: 200, fontSize: 14 }}
+        style={{ minWidth: 200, fontSize: 16 }}
       >
         <option value="ALL">ทุกกลุ่มธุรกิจ</option>
         {businessGroups.map((g) => (
@@ -123,7 +123,7 @@ export function FilterBar({ provinces, offices, businessGroups }: FilterBarProps
       />
 
       {/* เดือน/ปี */}
-      <span style={{ fontSize: 14, color: "var(--color-ink-soft)", flexShrink: 0 }}>
+      <span style={{ fontSize: 16, color: "var(--color-ink-soft)", flexShrink: 0 }}>
         เดือน/ปี:
       </span>
       <input
@@ -132,7 +132,7 @@ export function FilterBar({ provinces, offices, businessGroups }: FilterBarProps
         className="date-input"
         value={currentMonthValue}
         onChange={handleMonthChange}
-        style={{ fontSize: 14 }}
+        style={{ fontSize: 16 }}
       />
 
       {/* Reset */}
@@ -141,7 +141,7 @@ export function FilterBar({ provinces, offices, businessGroups }: FilterBarProps
         onClick={resetFilters}
         style={{
           marginLeft: "auto",
-          fontSize: 14,
+          fontSize: 16,
           color: "var(--color-brand)",
           background: "none",
           border: "1px solid var(--color-brand-light)",

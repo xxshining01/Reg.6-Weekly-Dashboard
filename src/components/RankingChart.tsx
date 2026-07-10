@@ -36,7 +36,7 @@ function CustomTooltip({ active, payload }: {
         border: "1px solid var(--color-paper-line)",
         borderRadius: 8,
         padding: "8px 12px",
-        fontSize: 14,
+        fontSize: 16,
         boxShadow: "var(--shadow-card)",
         fontFamily: "var(--font-sans)",
       }}
@@ -57,7 +57,7 @@ function CustomTooltip({ active, payload }: {
   );
 }
 
-export function RankingChart({ data, title }: { data: RankItem[]; title: string }) {
+export function RankingChart({ data, title, isDrillDown }: { data: RankItem[]; title: string; isDrillDown?: boolean }) {
   // Filter out items with 0 target
   const validData = data.filter((d) => d.target > 0);
   const sorted = [...validData].sort((a, b) => b.progressPercent - a.progressPercent);
@@ -87,10 +87,10 @@ export function RankingChart({ data, title }: { data: RankItem[]; title: string 
   return (
     <div className="card" style={{ padding: "14px 16px", height: "100%", display: "flex", flexDirection: "column" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-        <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--color-ink)", margin: 0 }}>
+        <h2 style={{ fontSize: 17, fontWeight: 600, color: "var(--color-ink)", margin: 0 }}>
           {title}
         </h2>
-        <span style={{ fontSize: 13, color: "var(--color-ink-soft)" }}>
+        <span style={{ fontSize: 15, color: "var(--color-ink-soft)" }}>
           % เทียบเป้าหมาย
         </span>
       </div>
@@ -105,17 +105,19 @@ export function RankingChart({ data, title }: { data: RankItem[]; title: string 
               type="number"
               domain={[0, Math.max(100, ...sorted.map((d) => d.progressPercent))]}
               tickFormatter={(v) => `${v}%`}
-              tick={{ fontSize: 12, fill: "var(--color-ink-soft)", fontFamily: "var(--font-sans)" }}
+              tick={{ fontSize: 14, fill: "var(--color-ink-soft)", fontFamily: "var(--font-sans)" }}
               tickLine={false}
               axisLine={{ stroke: "var(--color-paper-line)" }}
             />
             <YAxis
               type="category"
               dataKey="name"
-              tick={{ fontSize: 13, fill: "var(--color-ink)", fontFamily: "var(--font-sans)" }}
+              tickFormatter={(name) => (isDrillDown && name.length >= 5 ? name.substring(0, 5) : name)}
+              tick={{ fontSize: 15, fill: "var(--color-ink)", fontFamily: "var(--font-sans)" }}
               tickLine={false}
               axisLine={false}
               width={100}
+              interval={0}
             />
             <Tooltip content={<CustomTooltip />} />
             <Bar dataKey="progressPercent" radius={[0, 4, 4, 0]} maxBarSize={20}>

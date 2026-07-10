@@ -42,7 +42,7 @@ export function AIInsightPanel({ insightText, generatedAt }: AIInsightPanelProps
           style={{
             fontFamily: "var(--font-display)",
             fontWeight: 700,
-            fontSize: 13,
+            fontSize: 15,
             color: "var(--color-brand)",
           }}
         >
@@ -50,7 +50,7 @@ export function AIInsightPanel({ insightText, generatedAt }: AIInsightPanelProps
         </span>
         <span
           style={{
-            fontSize: 10,
+            fontSize: 11,
             color: "var(--color-ink-soft)",
             backgroundColor: "var(--color-paper-soft)",
             border: "1px solid var(--color-paper-line)",
@@ -65,7 +65,7 @@ export function AIInsightPanel({ insightText, generatedAt }: AIInsightPanelProps
       {/* Insight text */}
       <p
         style={{
-          fontSize: 12.5,
+          fontSize: 14.5,
           color: "var(--color-ink)",
           lineHeight: 1.7,
           margin: 0,
@@ -80,7 +80,7 @@ export function AIInsightPanel({ insightText, generatedAt }: AIInsightPanelProps
       {generatedAt && (
         <p
           style={{
-            fontSize: 10,
+            fontSize: 11,
             color: "var(--color-ink-soft)",
             margin: "8px 0 0",
             borderTop: "1px solid rgba(38,76,115,0.1)",
